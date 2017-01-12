@@ -1,3 +1,7 @@
 [submodule "StudentManager/ltframe"]
 	path = StudentManager/ltframe
 	url = https://github.com/ltframe/ltframe/
+	
+[submodule "StudentManager/tablesorter/"]
+	path = StudentManager/tablesorter/
+	url = https://github.com/Mottie/tablesorter/
