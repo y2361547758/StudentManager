@@ -1,0 +1,3 @@
+[submodule "StudentManager/ltframe"]
+	path = StudentManager/ltframe
+	url = https://github.com/ltframe/ltframe/
