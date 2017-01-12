@@ -1,0 +1,14 @@
+*{text-align:center}
+body{background-color: rgba(255,255,255,0.5)}
+div {display: inline-block}
+table{width:100%}
+caption {
+	font-size: larger;
+	color: blue;
+}
+thead{cursor:pointer}
+th{
+	border: none;
+	border-right: 1px solid #DDD;
+}
+.te{border-right:none}

@@ -1,0 +1,136 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn" />
+		<meta content="application/xhtml+xml; charset=utf-8" http-equiv="Content-Type" />
+		<title>学生成绩管理</title>
+		<script src="./js/jquery.min.js"></script>
+		<script src="./js/jquery.tablesorter.min.js"></script>
+		<link rel="stylesheet" href="./css/list.css" />
+		<style>
+			.ctrl{
+				position: fixed;
+				bottom: 40px;
+				right: 20px
+    	}
+    	input{width:80px}
+    	.te input{width:auto}
+		</style>
+		<script>
+			var item = ["no","name","math","eng","com","mil","pe","sum","rnk"];
+			var txt;
+			var table;
+			function sortby(x,y){
+				if(x["sum"]<y["sum"])return 1;
+				return 0;
+			}
+			function reload(s){
+				txt2 = getList2();
+				//txt2 = txt = JSON.parse(getList());
+				txt=[];
+				for(i in txt2)txt.push(txt2[i]);
+				txt2 = txt;
+				for(i in txt2)txt2[i]["sum"] = ( txt2[i]["math"] + txt2[i]["eng"] + txt2[i]["com"] + txt2[i]["mil"] + txt2[i]["pe"] ) / 5;
+				txt2.sort(sortby);
+				for(i in txt2){
+					if(i>0 && txt2[i]["sum"] == txt2[i-1]["sum"])txt2[i]["rnk"] = txt2[i-1]["rnk"];
+					else txt2[i]["rnk"] = parseInt(i)+1;;
+				}
+				if(table.children().length>0)table.children().remove();
+				for(var i in txt2){
+					if(!s || s == 1 && txt2[i]["no"].indexOf($("#no").val()) > -1 || s == 2 && txt2[i]["name"].indexOf($("#name").val()) > -1 ){
+						var tr = $("<tr></tr>").attr("id","l"+i);
+						for(var j in item){
+							var th = $("<th></th>").text(txt2[i][item[j]]);
+							tr.append(th);
+						}
+						var th = $("<th><input type='checkbox'></th>");
+						tr.append(th);
+						tr.children().last().attr("class","te");
+						table.append(tr);
+					}
+				}
+			}
+			function ready(){
+				table = $("tbody");
+				reload(0);
+				$.tablesorter.destroy($('table'),false);
+				$('table').tablesorter();
+			}
+			function editStd(){
+				var table = $("tbody").children();
+				for(var i=0;i<table.length;i++){
+					var j = table.eq(i).find(":checkbox");
+					if(j.length)if(j[0].checked){
+						j = table.eq(i).children();
+						var th = j.eq(2);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(3);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(4);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(5);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(6);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(9);
+						var inp = $("<th><button onclick='changeStd($(this))'>确定</button></th>");
+						th.replaceWith(inp);
+					}
+				}
+			}
+			function changeStd(tr){
+				var tr = tr.parent().parent();
+				var i = tr.attr("id").slice(1);
+				txt[i]["math"] = parseInt(tr.find(":text:eq(0)").val());
+				txt[i]["eng"] = parseInt(tr.find(":text:eq(1)").val());
+				txt[i]["com"] = parseInt(tr.find(":text:eq(2)").val());
+				txt[i]["mil"] = parseInt(tr.find(":text:eq(3)").val());
+				txt[i]["pe"] = parseInt(tr.find(":text:eq(4)").val());
+				//pushList(JSON.stringify(txt));
+                pushList2(txt,Object.keys(txt).length);
+				//ready();
+				tr.children().remove();
+				for(var j in item){
+					var th = $("<th></th>").text(txt[i][item[j]]);
+					tr.append(th);
+				}
+				var th = $("<th><input type='checkbox'></th>");
+				tr.append(th);
+				tr.children().last().attr("class","te");
+			}
+		</script>
+	</head>
+	<body onload="ready()" id="sco">
+		<h1>成绩查询</h1>
+		<div>
+			<label>学号：</label>
+			<input id="no" type="text" onkeyup="reload(1)">
+		</div>
+		<div>
+			<label>姓名：</label>
+			<input id="name" type="text" onkeyup="reload(2)">
+		</div>
+		<hr />
+		<table>
+			<thead>
+				<tr><th>学号</th><th>姓名</th><th>高等数学</th><th>大学英语</th><th>计算机基础</th><th>军事理论</th><th>体育</th><th>平均分</th><th>排名</th><th class="te"></th></tr>
+			</thead>
+			<tbody></tbody>
+			<tfoot></tfoot>
+		</table>
+		<div class="ctrl">
+			<button onclick="ready()">刷新</button>
+			<button onclick="editStd()">修改学生成绩</button>
+		</div>
+	</body>
+</html>

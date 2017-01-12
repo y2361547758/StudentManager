@@ -1,0 +1,166 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn" />
+		<meta content="application/xhtml+xml; charset=utf-8" http-equiv="Content-Type" />
+		<title>学生成绩管理</title>
+		<script src="./js/jquery.min.js"></script>
+		<script src="./js/jquery.tablesorter.min.js"></script>
+		<link rel="stylesheet" href="./css/list.css" />
+		<style>
+			.ctrl{
+				position: fixed;
+				bottom: 40px;
+				right: 20px
+    	}
+    	input{width:80px}
+    	.te input{width:auto}
+		</style>
+		<script>
+			var item = ["no","name","sex","birth","class"];
+			var txt;
+			function ready(){
+				txt = getList2();
+				//txt = JSON.parse(getList());
+				var table = $("tbody");
+				table.children().remove();
+				for(var i in txt){
+					var tr = $("<tr></tr>").attr("id","l"+i);
+					for(var j in item){
+						var th = $("<th></th>").text(txt[i][item[j]]);
+						tr.append(th);
+					}
+					var th = $("<th><input type='checkbox'></th>");
+					tr.append(th);
+					tr.children().last().attr("class","te");
+					table.append(tr);
+				}
+				$.tablesorter.destroy($('table'),false);
+				$('table').tablesorter();
+			}
+			function addStd(){
+				var table = $("tfoot");
+			  var tr = $("<tr></tr>");
+				var th = $("<th><input type='text'></th>");
+				tr.append(th);
+				var th = $("<th><input type='text'></th>");
+				tr.append(th);
+				var th = $("<th><input type='text'></th>");
+				tr.append(th);
+				var th = $("<th><input type='text'></th>");
+				tr.append(th);
+				var th = $("<th><input type='text'></th>");
+				tr.append(th);
+				var th = $("<th><button onclick='pushStd($(this))'>确定</button></th>");
+				tr.append(th);
+				tr.children().last().attr("class","te");
+				table.append(tr);
+			}
+			function pushStd(tr){
+				var tr = tr.parent().parent();
+                i = Object.keys(txt).length.toString();
+				txt[i]={
+					"no":tr.find(":text:eq(0)").val(),
+					"name":tr.find(":text:eq(1)").val(),
+					"sex":tr.find(":text:eq(2)").val(),
+					"birth":tr.find(":text:eq(3)").val(),
+					"class":tr.find(":text:eq(4)").val(),
+					"math":0,
+					"eng":0,
+					"com":0,
+					"mil":0,
+					"pe":0
+				};
+				tr.remove();
+				//pushList(JSON.stringify(txt));
+                pushList2(txt,Object.keys(txt).length);
+				ready();
+			}
+			function editStd(){
+				var table = $("tbody").children();
+				for(var i=0;i<table.length;i++){
+					var j = table.eq(i).find(":checkbox");
+					if(j.length)if(j[0].checked){
+						j = table.eq(i).children();
+						var th = j.eq(0);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(1);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(2);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(3);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(4);
+						var inp = $("<input type='text' value='"+th.text()+"'>");
+						th.text("");
+						th.append(inp);
+						var th = j.eq(5);
+						var inp = $("<th><button onclick='changeStd($(this))'>确定</button></th>");
+						th.replaceWith(inp);
+					}
+				}
+			}
+			function changeStd(tr){
+				var tr = tr.parent().parent();
+				var i = tr.attr("id").slice(1);
+				txt[i]["no"] = tr.find(":text:eq(0)").val();
+				txt[i]["name"] = tr.find(":text:eq(1)").val();
+				txt[i]["sex"] = tr.find(":text:eq(2)").val();
+				txt[i]["birth"] = tr.find(":text:eq(3)").val();
+				txt[i]["class"] = tr.find(":text:eq(4)").val();
+				//pushList(JSON.stringify(txt));
+                pushList2(txt,Object.keys(txt).length);
+				//ready();
+				tr.children().remove();
+				for(var j in item){
+					var th = $("<th></th>").text(txt[i][item[j]]);
+					tr.append(th);
+				}
+				var th = $("<th><input type='checkbox'></th>");
+				tr.append(th);
+				tr.children().last().attr("class","te");
+			}
+			function delStd(){
+				var table = $("tbody").children();
+				for(var i=0;i<table.length;i++){
+					var j = table.eq(i).find(":checkbox");
+					if(j.length)if(j[0].checked){
+						var j = table.eq(i).attr("id").slice(1);
+						txt[j] = false;
+						table.eq(i).remove();
+					}
+				}
+                var txt2 = {};
+				//for(i=txt.length-1;i>-1;i--)if(!txt[i])txt.splice(i,1);
+                for(i in txt)if(txt[i])txt2[i] = txt[i];
+                txt = txt2;
+				//pushList(JSON.stringify(txt));
+                pushList2(txt,Object.keys(txt).length);
+				//ready();
+			}
+		</script>
+	</head>
+	<body onload="ready()" id="stu">
+		<h1>学生信息管理</h1>
+		<table>
+			<thead>
+				<tr><th>学号</th><th>姓名</th><th>性别</th><th>生日</th><th>班级</th><th class="te"></th></tr>
+			</thead>
+			<tbody></tbody>
+			<tfoot></tfoot>
+		</table>
+		<div class="ctrl">
+			<button onclick="ready()">刷新</button>
+			<button onclick="addStd()">添加学生</button>
+			<button onclick="editStd()">修改学生信息</button>
+			<button onclick="delStd()">删除选中学生</button>
+		</div>
+	</body>
+</html>

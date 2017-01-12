@@ -1,0 +1,294 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn" />
+		<meta content="application/xhtml+xml; charset=utf-8" http-equiv="Content-Type" />
+		<meta name="viewport" content="width=device-width, user-scalable=yes" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>学生成绩管理</title>
+		<script src="./js/jquery.min.js"></script>
+		<style>
+			*{
+				margin: 0;
+				font-family:'Microsoft YaHei UI','Microsoft YaHei UI Light';
+				overflow: hidden;
+				height:100%
+			}
+			body{
+				border: 1px #0063B1;
+				user-select:none;-webkit-user-select:none;
+				cursor:default;
+			}
+			iframe{
+				border: none;
+				width: 100%;
+			}
+			.title_bar{
+				background-color: #0063B1;
+				height: 30px;
+			}
+			.title_bar img{
+				float:left;
+				height:24px;
+				margin:3px 5px;
+			}
+			.title_bar,.title_ctrl{
+				padding:0 5px;
+			}
+			.title_ctrl{
+				position: absolute;
+				height: 30px;
+				right: 0;
+				top: 0;
+			}
+			.title_view{
+				float:left;
+				color: #FFF;
+				font-size: small;
+				line-height: 30px;
+			}
+			.title_button{
+				/*background-color: #0063B1;*/
+				transition:background-color .1s;-webkit-transition:background-color .1s;
+				font-family: Segoe MDL2 Assets;
+				/*color: #999999;*/
+				color: #FFF;
+				width: 46px;
+				height: 27px;
+				line-height: 30px;
+				text-align: center;
+				float: right;
+				font-size: x-small
+			}
+			#title_close:hover{background-color: #E81123;color: #FFF;}
+			#title_close:active{background-color: #8B325B;transition:background-color 0s;-webkit-transition:background-color 0s;}
+			#title_min:hover,#title_max:hover,#title_res:hover{background-color: #1A73B9;/*#E5E5E5*/color: #FFF;}
+			#title_min:active,#title_max:active,#title_res:active{background-color: #3583C0;transition:background-color 0s;-webkit-transition:background-color 0s;}
+			.color1-1{background-color:#FFD6A5}
+			.color1-2{background-color:#FFF7ED}
+			.color2-1{background-color:#C4EDFA}
+			.color2-2{background-color:#F3FBFE}
+			.color3-1{background-color:#D8E0D6}
+			.color3-2{background-color:#F7F9F7}
+			.color4-1{background-color:#CDDFFC}
+			.color4-2{background-color:#F5F9FE}
+			.color5-1{background-color:#FFFDB1}
+			.color5-2{background-color:#FFFFEF}
+			.color6-1{background-color:#FFC3B9}
+			.color6-2{background-color:#FFF3F1}
+			.color7-1{background-color:#E7DADA}
+			.color7-2{background-color:#FAF8F8}
+			.color8-1{background-color:#CBF5CE}
+			.color8-2{background-color:#F5FDF5}
+			.color9-1{background-color:#FFB9E9}
+			.color9-2{background-color:#FFF1FB}
+			.color0-1{background-color:#DCDBE3}
+			.color0-2{background-color:#F8F8F8}
+			.b1{
+				animation: turn linear 5s infinite;
+				-webkit-animation: turn linear 5s infinite;
+				position:absolute;
+			}
+			.r1{-webkit-border-radius:50%;border-radius:50%;position:absolute;}
+			.pos1{
+				left:50%;top:41%;
+				height:20%;width:48%;
+				z-index:-4;
+				transform-origin:0% 50%;
+				-webkit-transform-origin:0% 50%;
+			}
+			.pos2{
+				left:41%;top:20%;
+				height:30%;width:18%;
+				z-index:-1;
+				transform-origin:50% 100%;
+				-webkit-transform-origin:50% 100%;
+			}
+			@keyframes turn{
+				from {transform: rotate(0deg)}
+				to {transform: rotate(360deg)}
+			}
+			@-webkit-keyframes turn{
+				from {transform: rotate(0deg)}
+				to {transform: rotate(360deg)}
+			}
+			.splitView{
+				height: 100%
+			}
+			#menu{
+				position:absolute;
+				width: 48px;
+				background-color: #f2f2f2;
+				/*background-color: rgba(240,240,240,0.8);*/
+				/*opacity:0.8;*/
+			}
+			#menu button{
+				width: 48px;
+				float: left;
+				border: none;
+				background: none;
+				font-family: 'Segoe MDL2 Assets';
+				/*font-size: xx-large;*/
+				font-size: 16px;
+			}
+			#menu .button{
+				height: 48px;
+			}
+			#menu .button:hover,#func:hover{background: #CCC;}
+			#menu .button:active,#func:active{background: #AAA;}
+			#menu p,#menu h2{
+				position: absolute;
+				line-height: 48px;
+				margin-left: 56px;
+				width: 74px;
+			}
+			#mainPage{
+				text-align: center;
+				height: 100%;
+				margin-left:48px;
+			}
+		</style>
+		<script>
+			var manu;
+			function ready(){
+				var col = " color" + Math.floor(Math.random()*10) + "-";
+				var diva = document.getElementById("background-animation");
+				diva.parentNode.className += col + "1";
+				diva = diva.childNodes[1];
+				diva.childNodes[3].className += col + "1";
+				diva.childNodes[9].className += col + "1";
+				diva.childNodes[1].className += col + "2";
+				diva.childNodes[5].className += col + "2";
+				diva.childNodes[7].className += col + "2";
+				diva.childNodes[11].className += col + "2";
+				diva.childNodes[13].className += col + "2";
+				
+				$("#title_close").bind('mouseup',function() {
+					QuitApp();
+				});
+				$("#title_res").bind('mouseup',function() {
+					$("#title_res").css("display","none");
+					$("#title_max").css("display","");
+					ResWindow();
+				}).css("display","none");
+				$("#title_max").bind('mouseup',function() {
+					$("#title_max").css("display","none");
+					$("#title_res").css("display","");
+					MaxWindow();
+				});
+				$("#title_min").bind('mouseup',function() {
+					MinWindow();
+				});
+				$(".title_bar").bind('dblclick',function() {
+					ChaWindow();
+				});
+				$(".title_bar").bind('mousedown',function() {
+					DragWindow();
+				});
+				window.addEventListener('drop', function(ev){
+					ev.preventDefault();
+				}, false);
+				/*
+				var rotation = function() { 
+				$(".b1").rotate({ 
+					angle: 0, 
+					animateTo: 360, 
+					callback: rotation 
+				}); 
+				} 
+				rotation();
+				*/
+				//changePage("homePage");
+				
+				manu = $("#menu");
+				manu.mouseout(function (){
+					$(this).stop(true).animate({width:'48px'},100)
+				});
+			}
+			function extend(){
+				manu.mouseover(function(){
+					$(this).stop(true).animate({width:'160px'},150)
+				}).mouseover();
+				$("#func").attr("onclick","manu.mouseout()");
+				setTimeout('waitf()',100);
+			}
+			function waitf(){
+				if(manu.width() == 48){
+					manu.unbind("mouseover");
+					$("#func").attr("onclick","extend()");
+				}
+				else setTimeout("waitf()",100);
+                console.log(1);
+			}
+			function changePage(target){
+				var mainPage = $("#mainPage");
+				mainPage.children().css("display","none");
+				mainPage.children("#"+target).css("display","");
+			}
+		</script>
+	</head>
+	<body onload="ready()">
+		<div style="height:30px">
+			<div class="title_bar">
+				<img src="..\small.ico">
+				<div class="title_view">学生成绩管理</div>
+			</div>
+			<div class="title_ctrl">
+				<div class="title_button" id="title_close2" style="display:none">╳</div>
+				<div class="title_button" id="title_close"></div>
+				<div class="title_button" id="title_res"></div>
+				<div class="title_button" id="title_max"></div>
+				<div class="title_button" id="title_min"></div>
+			</div>
+		</div>
+		<div id="app" class="splitView">
+			<div id="menu">
+				<div style="height:48px">
+					<button id="func" style="font-size:25px" onclick="extend()"></button>
+					<h2>功能</h2>
+				</div>
+				<div class="button" onclick="$('#iframe').attr('src','./home.html')">
+					<button></button>
+					<p>主页</p>
+				</div>
+				<div class="button" onclick="$('#iframe').attr('src','./student.html')">
+					<button></button>
+					<p>学生管理</p>
+				</div>
+				<div class="button" onclick="$('#iframe').attr('src','./score.html')">
+					<button></button>
+					<p>成绩查询</p>
+				</div>
+				<div class="button" onclick="$('#iframe').attr('src','./statistics.html')">
+					<button></button>
+					<p>统计</p>
+				</div>
+				<div class="button" onclick="$('#iframe').attr('src','./failed.html')">
+					<button></button>
+					<p>挂科榜</p>
+				</div>
+				<div class="button" onclick="$('#iframe').attr('src','./about.html')">
+					<button></button>
+					<p>关于</p>
+				</div>
+				<div class="button" onclick="QuitApp()" style="display:none">
+					<button></button>
+					<p>退出</p>
+				</div>
+			</div>
+			<div id="mainPage">
+				<iframe id="iframe" src="./home.html"></iframe>
+			</div>
+		</div>
+		<div id="background-animation" style="pointer-events:none">
+			<div style="left:-20%;top:-10%;width:100%;padding-bottom:100%;height:0;position:absolute;">
+				<div class="r1" style="left:0%;top:0%;height:100%;width:100%;z-index:-7;"></div>
+				<div class="r1" style="left:6%;top:6%;height:88%;width:88%;z-index:-6;"></div>
+				<div class="r1" style="left:8%;top:8%;height:84%;width:84%;z-index:-5;"></div>
+				<div class="b1 pos1"></div>
+				<div class="r1" style="left:25%;top:25%;height:50%;width:50%;z-index:-3;"></div>
+				<div class="r1" style="left:30%;top:30%;height:40%;width:40%;z-index:-2;"></div>
+				<div class="b1 pos2"></div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Language" content="zh-cn" />
+		<meta content="application/xhtml+xml; charset=utf-8" http-equiv="Content-Type" />
+		<title>学生成绩管理</title>
+		<script src="./js/jquery.min.js"></script>
+		<script src="./js/jquery.tablesorter.min.js"></script>
+		<link rel="stylesheet" href="./css/list.css" />
+		<style>
+			#A{color:red}
+		</style>
+		<script>
+			var lec = {
+				"math":"高等数学",
+				"eng":"大学英语",
+				"com":"计算机基础",
+				"mil":"军事理论",
+				"pe":"体育"
+			};
+			var txt;
+			function ready(){
+				txt = getList2();
+				//txt = JSON.parse(getList());
+				var table = $("tbody");
+				var count=0,times=0;
+				if(table.children().length>0)table.children().remove();
+				for(var i in txt){
+					var flag = false;
+					for(var j in lec){
+						if(txt[i][j] < 60){
+							var tr = $("<tr></tr>");
+							var th = $("<th></th>").text(txt[i]["no"]);
+							tr.append(th);
+							var th = $("<th></th>").text(txt[i]["name"]);
+							tr.append(th);
+							var th = $("<th></th>").text(lec[j]);
+							tr.append(th);
+							var th = $("<th></th>").text(txt[i][j]);
+							tr.append(th);
+							times++;
+							flag = true;
+							table.append(tr);
+						}
+					}
+					if(flag)count++;
+				}
+				$("#times").children().last().text(count+"/"+times);
+				
+				$("table").tablesorter(); 
+			}
+		</script>
+	</head>
+	<body onload="ready()" id="sco">
+		<h1>统计</h1>
+		<table>
+			<caption>不及格名单</caption>
+			<thead>
+				<tr><th>学号</th><th>名称</th><th>课程</th><th class="te">分数</th></tr>
+			</thead>
+			<tbody>
+				<tr><th>001</th><th>张三</th><th>高等数学</th><th class="te">55</th></tr>
+				<tr><th>001</th><th>张三</th><th>体育</th><th class="te">55</th></tr>
+				<tr><th>002</th><th>李四</th><th>大学英语</th><th class="te">55</th></tr>
+				<tr><th>003</th><th>王五</th><th>计算机基础</th><th class="te">55</th></tr>
+				<tr><th>004</th><th>老六</th><th>军事理论</th><th class="te">55</th></tr>
+			</tbody>
+			<tfoot>
+				<tr><th class="te">&nbsp;</th></tr>
+				<tr id="times"><th>人数/次：</th><th class="te">4/5</th></tr>
+			</tfoot>
+		</table>
+	</body>
+</html>
